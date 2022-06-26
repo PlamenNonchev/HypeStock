@@ -1,5 +1,6 @@
 ﻿using HypeStock.Data.Models;
 using HypeStock.Models.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -12,21 +13,25 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HypeStock.Controllers
+namespace HypeStock.Features.Identity
 {
     public class IdentityController: ApiController
     {
         private readonly UserManager<User> userManager;
         private readonly AppSettings appSettings;
+        private readonly IIdentityService identityService;
 
         public IdentityController(
             UserManager<User> userManager,
-            IOptions<AppSettings> appSettings)
+            IOptions<AppSettings> appSettings,
+            IIdentityService identityService)
         {
             this.userManager = userManager;
             this.appSettings = appSettings.Value;
+            this.identityService = identityService;
         }
 
+        [HttpPost]
         [Route(nameof(Register))]
         public async Task<ActionResult> Register(RegisterUserModel model)
         {
@@ -46,8 +51,9 @@ namespace HypeStock.Controllers
             return BadRequest(result.Errors);
         }
 
+        [HttpPost]
         [Route(nameof(Login))]
-        public async Task<ActionResult<object>> Login(LoginUserModel model)
+        public async Task<ActionResult<LoginResponseModel>> Login(LoginUserModel model)
         {
             var user = await this.userManager.FindByNameAsync(model.UserName);
             if (user == null)
@@ -61,24 +67,14 @@ namespace HypeStock.Controllers
                 return Unauthorized();
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Name, user.UserName),
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var encryptedToken = tokenHandler.WriteToken(token);
+            var token = identityService.GenerateJwtToken(
+                user.Id,
+                user.UserName,
+                this.appSettings.Secret);
 
-            return new 
+            return new LoginResponseModel
             { 
-                Token = encryptedToken,
+                Token = token,
             };  
         }
     }

@@ -1,7 +1,6 @@
 ﻿using HypeStock.Data;
 using HypeStock.Data.Models;
 using HypeStock.Infrastructure;
-using HypeStock.Models.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,15 +9,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace HypeStock.Controllers
+namespace HypeStock.Features.Products
 {
     public class ProductsController: ApiController
     {
-        private readonly HypeStockDbContext data;
+        private readonly IProductService productService;
 
-        public ProductsController(HypeStockDbContext data)
+        public ProductsController(IProductService productService)
         {
-            this.data = data;
+            this.productService = productService;
         }
 
         [Authorize]
@@ -27,18 +26,9 @@ namespace HypeStock.Controllers
         {
             var userId = this.User.GetId();
 
-            var product = new Product
-            {
-                Description = model.Description,
-                ImageUrl = model.ImageUrl,
-                BrandId = model.BrandId,
-            };
+            var id = await productService.Create(model.ImageUrl, model.Description, model.BrandId);
 
-            this.data.Add(product);
-
-            await this.data.SaveChangesAsync();
-
-            return Created(nameof(this.Create), product.Id);
+            return Created(nameof(this.Create), id);
         }
     }
 }

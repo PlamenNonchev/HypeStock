@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HypeStock.Models.Products
+namespace HypeStock.Features.Products
 {
     public class CreateProductModel
     {

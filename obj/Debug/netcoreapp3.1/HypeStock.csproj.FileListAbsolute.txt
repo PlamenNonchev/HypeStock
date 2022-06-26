@@ -67,3 +67,8 @@ C:\Users\plame\source\repos\HypeStock\HypeStock\obj\Debug\netcoreapp3.1\HypeStoc
 C:\Users\plame\source\repos\HypeStock\HypeStock\obj\Debug\netcoreapp3.1\HypeStock.pdb
 C:\Users\plame\source\repos\HypeStock\HypeStock\obj\Debug\netcoreapp3.1\HypeStock.genruntimeconfig.cache
 C:\Users\plame\source\repos\HypeStock\HypeStock\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\plame\source\repos\HypeStock\HypeStock\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
+C:\Users\plame\source\repos\HypeStock\HypeStock\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\plame\source\repos\HypeStock\HypeStock\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\plame\source\repos\HypeStock\HypeStock\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\plame\source\repos\HypeStock\HypeStock\obj\Debug\netcoreapp3.1\HypeStock.MvcApplicationPartsAssemblyInfo.cs

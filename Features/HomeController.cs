@@ -7,11 +7,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HypeStock.Controllers
+namespace HypeStock.Features
 {
     public class HomeController : ApiController
     {
         [Authorize]
+        [HttpGet]
         public ActionResult Get()
         {
             return Ok("Works");
