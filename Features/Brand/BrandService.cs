@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HypeStock.Features.Products
+namespace HypeStock.Features.Brand
 {
-    public interface IProductService
+    public interface IBrandService
     {
         public Task<int> Create(string imageUrl, string description, int brandId);
-        public Task<IEnumerable<ProductDetailsResponseModel>> GetProductsByBrand(int brandId);
     }
 }

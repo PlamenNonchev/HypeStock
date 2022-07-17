@@ -20,8 +20,18 @@ namespace HypeStock.Features.Products
             this.productService = productService;
         }
 
+
+        [Authorize]
+        [HttpGet]
+        [Route(nameof(GetProductsByUser))]
+        public async Task<IEnumerable<ProductDetailsResponseModel>> GetProductsByUser(int brandId)
+        {
+            return await this.productService.GetProductsByBrand(brandId);
+        }
+
         [Authorize]
         [HttpPost]
+        [Route(nameof(Create))]
         public async Task<ActionResult<int>> Create(CreateProductModel model)
         {
             var userId = this.User.GetId();

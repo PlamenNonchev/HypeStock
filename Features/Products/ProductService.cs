@@ -1,5 +1,6 @@
 ﻿using HypeStock.Data;
 using HypeStock.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,5 +31,16 @@ namespace HypeStock.Features.Products
 
             return product.Id;
         }
+
+        public async Task<IEnumerable<ProductDetailsResponseModel>> GetProductsByBrand(int brandId)
+            => await this.data
+                .Products
+                .Where(p => p.BrandId == brandId)
+                .Select(p => new ProductDetailsResponseModel
+                {
+                    Id = p.Id,
+                    ImageUrl = p.ImageUrl,
+                })
+                .ToListAsync();
     }
 }
