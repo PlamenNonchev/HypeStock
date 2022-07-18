@@ -1,5 +1,7 @@
 ﻿using HypeStock.Data.Models;
+using HypeStock.Features.Identity.Models;
 using HypeStock.Models.Identity;
+using HypeStock.Models.Identity.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

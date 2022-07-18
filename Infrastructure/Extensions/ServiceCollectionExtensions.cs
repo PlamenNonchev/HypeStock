@@ -2,6 +2,7 @@
 using HypeStock.Data.Models;
 using HypeStock.Features.Identity;
 using HypeStock.Features.Products;
+using HypeStock.Infrastructure.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HypeStock.Infrastructure
+namespace HypeStock.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
@@ -93,5 +94,10 @@ namespace HypeStock.Infrastructure
                         Version = "v1"
                     });
             });
+
+        public static void AddApiControllers(this IServiceCollection services)
+            => services
+                .AddControllers(options => options
+                .Filters.Add<ModelOrNotFoundActionFilter>());
     }
 }

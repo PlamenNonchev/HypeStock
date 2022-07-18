@@ -1,6 +1,6 @@
 using HypeStock.Data;
 using HypeStock.Data.Models;
-using HypeStock.Infrastructure;
+using HypeStock.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,7 +37,7 @@ namespace HypeStock
                 .AddJwtAuthentication(services.GetApplicationSettings(this.Configuration))
                 .AddApplicationServices()
                 .AddSwagger()
-                .AddControllers();
+                .AddApiControllers();
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace HypeStock.Features.Products
 {
-    public class CreateProductModel
+    public class CreateProductServiceModel
     {
         [Required]
         public string Description { get; set; }
