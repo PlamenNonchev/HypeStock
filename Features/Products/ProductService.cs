@@ -53,6 +53,25 @@ namespace HypeStock.Features.Products
             return true;
         }
 
+        public async Task<bool> Delete(int id)
+        {
+            var product = await this.data
+                .Products
+                .Where(p => p.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (product == null)
+            {
+                return false;
+            }
+
+            this.data.Products.Remove(product);
+
+            await this.data.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<IEnumerable<ProductDetailsServiceModel>> GetProductsByBrand(int brandId)
             => await this.data
                 .Products
@@ -77,5 +96,6 @@ namespace HypeStock.Features.Products
                     Brand = p.Brand.Name,
                 })
                 .FirstOrDefaultAsync();
+
     }
 }

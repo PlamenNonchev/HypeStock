@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace HypeStock.Features.Products
 {
+
+    using static Infrastructure.WebConstants;
+
     [Authorize]
     public class ProductsController: ApiController
     {
@@ -32,7 +35,7 @@ namespace HypeStock.Features.Products
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route(Id)]
         public async Task<ActionResult<ProductDetailsServiceModel>> Details(int id)
             => await this.productService.Details(id);
 
@@ -57,6 +60,21 @@ namespace HypeStock.Features.Products
                 model.ImageUrl);
 
             if (!updated)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route(Id)]
+        public async Task<ActionResult> Delete(int id)
+        {
+            //Add functionality to check if the user has rights to edit products.
+            var deleted = await this.productService.Delete(id);
+
+            if (!deleted)
             {
                 return BadRequest();
             }
