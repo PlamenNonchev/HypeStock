@@ -39,13 +39,34 @@ namespace HypeStock.Features.Products
         public async Task<ActionResult<ProductDetailsServiceModel>> Details(int id)
             => await this.productService.Details(id);
 
+        [HttpGet]
+        [Route("hot")]
+        public async Task<IEnumerable<ProductDetailsServiceModel>> GetHotProducts()
+        {
+            return await this.productService.GetHotProducts();
+        }
+
+        [HttpGet]
+        [Route("soon")]
+        public async Task<IEnumerable<ProductDetailsServiceModel>> GetProductsDroppingShortly()
+        {
+            return await this.productService.GetProductsDroppingShortly();
+        }
+
+        [HttpGet]
+        [Route("justAnnounced")]
+        public async Task<IEnumerable<ProductDetailsServiceModel>> GetJustAnnouncedProducts()
+        {
+            return await this.productService.GetJustAnnouncedProducts();
+        }
+
         [HttpPost]
         [Route(nameof(Create))]
         public async Task<ActionResult<int>> Create(CreateProductServiceModel model)
         {
             var userId = this.User.GetId();
 
-            var id = await productService.Create(model.ImageUrl, model.Description, model.BrandId);
+            var id = await productService.Create(model.ImageUrl, model.Description, model.BrandId, model.Model, model.Colorway, model.ReleaseDate);
 
             return Created(nameof(this.Create), id);
         }

@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "agrem7vlexjCQYVTFmGpzkeSiW3Rdps2Dhlr5yn7t0PccDPRtFHNthQDq71/Pj1p2Cv7vRer0T/a/jUw1JI9fQ==",
+  "dgSpecHash": "dEeC17r/4ogbBDe/0uEymDh2GgckfdcCy9/2+foZ0h1QrdNE+wuRqH25uEn8UF+Wzw1NMt3bR8SSQ8umQCYdDg==",
   "success": true,
   "projectFilePath": "C:\\Users\\plamen.nonchev\\source\\repos\\HypeStock\\HypeStock.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\plamen.nonchev\\.nuget\\packages\\fsharp.core\\4.5.2\\fsharp.core.4.5.2.nupkg.sha512",
+    "C:\\Users\\plamen.nonchev\\.nuget\\packages\\htmlagilitypack\\1.11.43\\htmlagilitypack.1.11.43.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.1\\microsoft.aspnetcore.authentication.jwtbearer.3.1.1.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\3.1.25\\microsoft.aspnetcore.cryptography.internal.3.1.25.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\3.1.25\\microsoft.aspnetcore.cryptography.keyderivation.3.1.25.nupkg.sha512",
@@ -50,6 +52,7 @@
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\runtime.win-x64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\runtime.win-x86.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
+    "C:\\Users\\plamen.nonchev\\.nuget\\packages\\scrapysharp\\3.0.0\\scrapysharp.3.0.0.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\swashbuckle.aspnetcore\\5.2.1\\swashbuckle.aspnetcore.5.2.1.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\5.2.1\\swashbuckle.aspnetcore.swagger.5.2.1.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\5.2.1\\swashbuckle.aspnetcore.swaggergen.5.2.1.nupkg.sha512",

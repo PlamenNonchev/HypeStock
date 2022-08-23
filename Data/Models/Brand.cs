@@ -10,6 +10,21 @@ namespace HypeStock.Data.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public int Likes { get; set; }
+        public int Dislikes { get; set; }
+        public decimal LikeRatio
+        {
+            get
+            {
+                if (Likes + Dislikes == 0)
+                {
+                    return 0;
+                }
+
+                return ((decimal)Likes / (Likes + Dislikes)) * 100;
+            }
+        }
         public IEnumerable<Product> Products { get; } = new HashSet<Product>();
     }
 }

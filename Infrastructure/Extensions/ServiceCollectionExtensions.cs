@@ -1,5 +1,6 @@
 ﻿using HypeStock.Data;
 using HypeStock.Data.Models;
+using HypeStock.Features.Brands;
 using HypeStock.Features.Identity;
 using HypeStock.Features.Products;
 using HypeStock.Infrastructure.Filters;
@@ -81,7 +82,8 @@ namespace HypeStock.Infrastructure.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
             => services
                 .AddTransient<IIdentityService, IdentityService>()
-                .AddTransient<IProductService, ProductService>();
+                .AddTransient<IProductService, ProductService>()
+                .AddTransient<IBrandService, BrandService>();
 
         public static IServiceCollection AddSwagger(this IServiceCollection services)
             => services.AddSwaggerGen(c =>

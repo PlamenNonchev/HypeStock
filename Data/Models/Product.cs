@@ -17,5 +17,20 @@ namespace HypeStock.Data.Models
         [Required]
         public Brand Brand { get; set; }
         public string Model { get; set; }
+        public decimal Price { get; set; }
+        public string Colorway { get; set; }
+        public int Likes { get; set; }
+        public int Dislikes { get; set; }
+        public DateTime ReleaseDate { get; set; }
+        public DateTime DatePosted { get; set; }
+        public decimal LikeRatio
+        {
+            get
+            {
+                return Dislikes == 0 ? 100 : (Likes / Dislikes) * 100;
+            }
+        }
+
+        public IEnumerable<RetailerProduct> ProductRetailers { get; set; }
     }
 }

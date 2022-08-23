@@ -15,6 +15,9 @@ namespace HypeStock.Data
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Retailer> Retailers { get; set; }
+        public DbSet<RetailerProduct> RetailersProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -24,6 +27,28 @@ namespace HypeStock.Data
                 .WithMany(b => b.Products)
                 .HasForeignKey(p => p.BrandId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Entity<Brand>()
+                .HasMany(b => b.Products)
+                .WithOne(p => p.Brand)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Entity<RetailerProduct>()
+                .HasKey(rp => new { rp.RetailerId, rp.ProductId });
+
+            builder
+                .Entity<RetailerProduct>()
+                .HasOne(rp => rp.Retailer)
+                .WithMany(r => r.RetailerProducts)
+                .HasForeignKey(rp => rp.RetailerId);
+
+            builder
+                .Entity<RetailerProduct>()
+                .HasOne(rp => rp.Product)
+                .WithMany(r => r.ProductRetailers)
+                .HasForeignKey(rp => rp.ProductId);
 
             base.OnModelCreating(builder);
         }

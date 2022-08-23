@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace HypeStock.Features.Products
 {
@@ -10,5 +11,8 @@ namespace HypeStock.Features.Products
         public string ImageUrl { get; set; }
         [Required]
         public int BrandId { get; set; }
+        public string Model { get; set; }
+        public string Colorway { get; set; }
+        public DateTime ReleaseDate { get; set; }
     }
 }
