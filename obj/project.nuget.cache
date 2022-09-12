@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "dEeC17r/4ogbBDe/0uEymDh2GgckfdcCy9/2+foZ0h1QrdNE+wuRqH25uEn8UF+Wzw1NMt3bR8SSQ8umQCYdDg==",
+  "dgSpecHash": "MJzM2wNTq+ZrEEtZGKLzf39NH4Y4/LJVJZt7valeU+hD72XgbptVRtXo3dkW8nP0EnW3Z3wB67ARGwllXIZBTw==",
   "success": true,
   "projectFilePath": "C:\\Users\\plamen.nonchev\\source\\repos\\HypeStock\\HypeStock.csproj",
   "expectedPackageFiles": [
@@ -119,8 +119,7 @@
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\plamen.nonchev\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512",
-    "C:\\Users\\plamen.nonchev\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512",
-    "C:\\Users\\plamen.nonchev\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.25\\microsoft.netcore.app.host.win-x64.3.1.25.nupkg.sha512"
+    "C:\\Users\\plamen.nonchev\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512"
   ],
   "logs": []
 }

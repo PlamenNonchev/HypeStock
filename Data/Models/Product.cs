@@ -27,10 +27,16 @@ namespace HypeStock.Data.Models
         {
             get
             {
-                return Dislikes == 0 ? 100 : (Likes / Dislikes) * 100;
+                if (Likes + Dislikes == 0)
+                {
+                    return 0;
+                }
+
+                return ((decimal)Likes / (Likes + Dislikes)) * 100;
             }
         }
 
         public IEnumerable<RetailerProduct> ProductRetailers { get; set; }
+        public IEnumerable<EditorsPick> EditorsPicks { get; set; }
     }
 }

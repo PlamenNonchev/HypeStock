@@ -139,8 +139,6 @@ C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\HypeStock
 C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\HypeStock.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\HypeStock.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\staticwebassets\HypeStock.StaticWebAssets.Manifest.cache
-C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\staticwebassets\HypeStock.StaticWebAssets.xml
-C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\scopedcss\bundle\HypeStock.styles.css
 C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\HypeStock.RazorTargetAssemblyInfo.cache
 C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\HypeStock.csproj.CopyComplete
 C:\Users\plamen.nonchev\source\repos\HypeStock\obj\Debug\netcoreapp3.1\HypeStock.dll

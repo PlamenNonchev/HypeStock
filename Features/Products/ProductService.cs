@@ -21,7 +21,7 @@ namespace HypeStock.Features.Products
         {
             this.data = data;
         }
-        public async Task<int> Create(string imageUrl, string description, int brandId, string model, string colorway, DateTime releaseDate)
+        public async Task<int> Create(string imageUrl, string description, int brandId, string model, string colorway, decimal price, DateTime releaseDate)
         {
             var product = new Product
             {
@@ -33,6 +33,7 @@ namespace HypeStock.Features.Products
                 ReleaseDate = releaseDate,
                 Likes = 0,
                 Dislikes = 0,
+                Price = price,
             };
 
             this.data.Add(product);
@@ -81,6 +82,18 @@ namespace HypeStock.Features.Products
             return true;
         }
 
+        public async Task<bool> UpdateEditorsPicks(int mainProductId, int sideProductId)
+        {
+            var editorsPicks = await this.data.EditorsPicks.ToListAsync();
+            var mainProduct = editorsPicks.First();
+            var sideProduct = editorsPicks.Last();
+            mainProduct.ProductId = mainProductId;
+            sideProduct.ProductId = sideProductId;
+
+            await this.data.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<IEnumerable<ProductDetailsServiceModel>> GetProductsByBrand(int brandId)
             => await this.data
                 .Products
@@ -92,10 +105,19 @@ namespace HypeStock.Features.Products
                 })
                 .ToListAsync();
 
+        public async Task<IEnumerable<ProductDetailsServiceModel>> GetAll()
+            => await this.data.Products
+                .Select(p => new ProductDetailsServiceModel
+                {
+                    Id = p.Id,
+                    Brand = p.Brand.Name,
+                    Model = p.Model,
+                }).ToListAsync();
+
         public async Task<IEnumerable<ProductDetailsServiceModel>> GetHotProducts() 
         {
             var products = await this.data.Products.Include(p => p.Brand).ToListAsync();
-            return products.OrderBy(p => p.LikeRatio).Take(4)
+            return products.OrderByDescending(p => p.LikeRatio).Take(4)
                 .Select(p => new ProductDetailsServiceModel
                 {
                     Id = p.Id,
@@ -110,7 +132,7 @@ namespace HypeStock.Features.Products
         public async Task<IEnumerable<ProductDetailsServiceModel>> GetProductsDroppingShortly()
         {
             var products = await this.data.Products.Include(p => p.Brand).ToListAsync();
-            return products.OrderByDescending(p => p.ReleaseDate)
+            return products.Where(p => p.ReleaseDate > DateTime.Now).OrderBy(p => p.ReleaseDate)
                 .Take(4)
                 .Select(p => new ProductDetailsServiceModel
                 {
@@ -139,23 +161,37 @@ namespace HypeStock.Features.Products
 
         public async Task<ProductDetailsServiceModel> Details(int id)
         {
-
             var product = await this.data
                 .Products.Include(p => p.Brand)
                 .Include(p => p.ProductRetailers).ThenInclude(pr => pr.Retailer)
                 .Where(p => p.Id == id)
-                .Select(p => new ProductDetailsServiceModel
-                {
-                    Id = p.Id,
-                    ImageUrl = p.ImageUrl,
-                    Description = p.Description,
-                    Brand = p.Brand.Name,
-                    Model = p.Model,
-                    ReleaseDate = p.ReleaseDate.Date.ToString(),
-                    Colorway = p.Colorway,
-                    Retailers = p.ProductRetailers.Select(pr => pr.Retailer).ToList(),
-                })
                 .FirstOrDefaultAsync();
+
+             var result = new ProductDetailsServiceModel
+               {
+                   Id = product.Id,
+                   ImageUrl = product.ImageUrl,
+                   Description = product.Description,
+                   Brand = product.Brand.Name,
+                   Model = product.Model,
+                   Likes = product.Likes,
+                   Dislikes = product.Dislikes,
+                   LikeRatio = product.LikeRatio.ToString("#.##"),
+                   ReleaseDate = product.ReleaseDate.ToShortDateString(),
+                   Released = product.ReleaseDate < DateTime.Now,
+                   Colorway = product.Colorway,
+               };
+
+            var retailers = product.ProductRetailers.Select(pr => pr.Retailer).Select(r => new RetailerServiceModel
+            {
+                Id = r.Id,
+                Description = r.Description,
+                Name = r.Name,
+                ImageUrl = r.ImageUrl,
+                WebsiteUrl = r.WebsiteUrl,
+            }).ToList();
+
+            result.Retailers = retailers;
 
             var similiarProducts = await this.data
                 .Products.Include(p => p.Brand)
@@ -169,20 +205,80 @@ namespace HypeStock.Features.Products
                 })
                 .ToListAsync();
 
-            var searchParams = product.Brand + " " + product.Model;
-            product.EbayListings = await GetEbayListings(searchParams);
-            product.EbaySoldPrices = await GetPastEbaySalePrices(searchParams);
+            var searchParams = result.Brand + " " + result.Model;
+            await AddEbayListings(searchParams, result);
+            result.EbaySoldPrices = await GetPastEbaySalePrices(searchParams);
 
-            product.SimilarProducts = similiarProducts;
+            result.SimilarProducts = similiarProducts;
 
-            return product;
-        } 
+            return result;
+        }
 
-        public async Task<List<EbayListingServiceModel>> GetEbayListings(string searchKeywords)
+        public async Task<ProductDetailsServiceModel> Vote(int productId, int likes, int dislikes)
+        {
+            var product = await this.data
+                .Products.Include(p => p.Brand)
+                .Include(p => p.ProductRetailers).ThenInclude(pr => pr.Retailer)
+                .Where(p => p.Id == productId)
+                .FirstOrDefaultAsync();
+
+            product.Likes = likes;
+            product.Dislikes = dislikes;
+
+            await this.data.SaveChangesAsync();
+
+            var result = new ProductDetailsServiceModel
+            {
+                Id = product.Id,
+                ImageUrl = product.ImageUrl,
+                Description = product.Description,
+                Brand = product.Brand.Name,
+                Model = product.Model,
+                Likes = product.Likes,
+                Dislikes = product.Dislikes,
+                LikeRatio = product.LikeRatio.ToString("#.##"),
+                ReleaseDate = product.ReleaseDate.Date.ToString(),
+                Colorway = product.Colorway,
+            };
+
+            var retailers = product.ProductRetailers.Select(pr => pr.Retailer).Select(r => new RetailerServiceModel
+            {
+                Id = r.Id,
+                Description = r.Description,
+                Name = r.Name,
+                ImageUrl = r.ImageUrl,
+                WebsiteUrl = r.WebsiteUrl,
+            }).ToList();
+
+            result.Retailers = retailers;
+
+            var similiarProducts = await this.data
+                .Products.Include(p => p.Brand)
+                .Where(p => p.Colorway == product.Colorway && p.Id != product.Id)
+                .Select(p => new ProductDetailsServiceModel
+                {
+                    Id = p.Id,
+                    ImageUrl = p.ImageUrl,
+                    Brand = p.Brand.Name,
+                    Model = p.Model,
+                })
+                .ToListAsync();
+
+            var searchParams = result.Brand + " " + result.Model;
+            await AddEbayListings(searchParams, result);
+            result.EbaySoldPrices = await GetPastEbaySalePrices(searchParams);
+
+            result.SimilarProducts = similiarProducts;
+
+            return result;
+        }
+
+        public async Task AddEbayListings(string searchKeywords, ProductDetailsServiceModel productResult)
         {
             var httpClient = new HttpClient();
             var searchParams = searchKeywords.Split();
             var url = "https://www.ebay.com/sch/i.html?_from=R40&_sacat=0&LH_TitleDesc=0&_nkw=" + String.Join("+", searchParams);
+            productResult.EbayUrl = url;
             var html = await httpClient.GetStringAsync(url);
 
             var htmlDocument = new HtmlDocument();
@@ -194,7 +290,7 @@ namespace HypeStock.Features.Products
 
             var listings = productUl[0].Descendants("li")
                 .Where(node => node.HasClass("s-item"))
-                .Take(4)
+                .Take(3)
                 .ToList();
 
             var result = new List<EbayListingServiceModel>();
@@ -212,7 +308,7 @@ namespace HypeStock.Features.Products
 
                 var resultListing = new EbayListingServiceModel()
                 {
-                    Title = listingInfo.Descendants("h3").FirstOrDefault(node => node.HasClass("s-item__title")).InnerText,
+                    Title = listingInfo.Descendants("div").FirstOrDefault(node => node.HasClass("s-item__title")).InnerText,
                     ImageUrl = imageSection.Descendants("img").FirstOrDefault().GetAttributeValue("src", ""),
                     Url = imageSection.Descendants("a").FirstOrDefault().GetAttributeValue("href", ""),
                     Condition = listingInfo.Descendants("div").FirstOrDefault(node => node.HasClass("s-item__subtitle")).Descendants("span").FirstOrDefault().InnerText,
@@ -222,7 +318,7 @@ namespace HypeStock.Features.Products
                 result.Add(resultListing);
             }
 
-            return result;
+            productResult.EbayListings = result;
         }
 
         public async Task<List<decimal>> GetPastEbaySalePrices(string searchKeywords)

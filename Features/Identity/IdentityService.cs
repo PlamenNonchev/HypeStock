@@ -11,7 +11,7 @@ namespace HypeStock.Features.Identity
 {
     public class IdentityService : IIdentityService 
     {
-        public string GenerateJwtToken(string userId, string userName, string secret)
+        public string GenerateJwtToken(string userId, string userName, string secret, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(secret);
@@ -22,6 +22,7 @@ namespace HypeStock.Features.Identity
                 {
                     new Claim(ClaimTypes.NameIdentifier, userId),
                     new Claim(ClaimTypes.Name, userName),
+                    new Claim(ClaimTypes.Role, role),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),

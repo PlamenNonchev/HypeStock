@@ -46,6 +46,23 @@ namespace HypeStock.Migrations
                     b.ToTable("Brands");
                 });
 
+            modelBuilder.Entity("HypeStock.Data.Models.EditorsPick", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("EditorsPicks");
+                });
+
             modelBuilder.Entity("HypeStock.Data.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -325,6 +342,15 @@ namespace HypeStock.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("HypeStock.Data.Models.EditorsPick", b =>
+                {
+                    b.HasOne("HypeStock.Data.Models.Product", "Product")
+                        .WithMany("EditorsPicks")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HypeStock.Data.Models.Product", b =>

@@ -42,6 +42,17 @@ namespace HypeStock.Features.Brands
             return res;
         }
 
+        public async Task<IEnumerable<BrandDetailsServiceModel>> GetAll() 
+        {
+            var brands = await this.data.Brands.Select(b => new BrandDetailsServiceModel
+            {
+                Id = b.Id,
+                Name = b.Name,
+            }).ToListAsync();
+
+            return brands;
+        }
+
         public async Task<IEnumerable<BrandDetailsServiceModel>> GetHot()
         {
             var brands = await this.data.Brands.ToListAsync();
@@ -113,6 +124,12 @@ namespace HypeStock.Features.Brands
                         Brand = p.Brand.Name,
                         Model = p.Model,
                         ImageUrl = p.ImageUrl,
+                        Likes = p.Likes,
+                        Dislikes = p.Dislikes,
+                        LikeRatio = p.LikeRatio.ToString("#.##"),
+                        Price = p.Price,
+                        Colorway = p.Colorway,
+                        ReleaseDate = p.ReleaseDate.Month.ToString() + "." + p.ReleaseDate.Day.ToString(),
                     }).ToList(),
                 });
             }

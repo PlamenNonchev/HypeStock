@@ -15,6 +15,7 @@ namespace HypeStock.Data
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<EditorsPick> EditorsPicks { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Retailer> Retailers { get; set; }
         public DbSet<RetailerProduct> RetailersProducts { get; set; }
@@ -26,6 +27,14 @@ namespace HypeStock.Data
                 .HasOne(p => p.Brand)
                 .WithMany(b => b.Products)
                 .HasForeignKey(p => p.BrandId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            builder
+                .Entity<EditorsPick>()
+                .HasOne(ep => ep.Product)
+                .WithMany(p => p.EditorsPicks)
+                .HasForeignKey(ep => ep.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder

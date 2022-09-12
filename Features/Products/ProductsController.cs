@@ -28,10 +28,17 @@ namespace HypeStock.Features.Products
 
 
         [HttpGet]
-        [Route(nameof(GetProductsByUser))]
-        public async Task<IEnumerable<ProductDetailsServiceModel>> GetProductsByUser(int brandId)
+        [Route(nameof(GetProductsByBrand))]
+        public async Task<IEnumerable<ProductDetailsServiceModel>> GetProductsByBrand(int brandId)
         {
             return await this.productService.GetProductsByBrand(brandId);
+        }
+
+        [HttpGet]
+        [Route("all")]
+        public async Task<IEnumerable<ProductDetailsServiceModel>> GetAllProducts()
+        {
+            return await this.productService.GetAll();
         }
 
         [HttpGet]
@@ -66,7 +73,7 @@ namespace HypeStock.Features.Products
         {
             var userId = this.User.GetId();
 
-            var id = await productService.Create(model.ImageUrl, model.Description, model.BrandId, model.Model, model.Colorway, model.ReleaseDate);
+            var id = await productService.Create(model.ImageUrl, model.Description, model.BrandId, model.Model, model.Colorway, model.Price, model.ReleaseDate);
 
             return Created(nameof(this.Create), id);
         }
@@ -100,6 +107,14 @@ namespace HypeStock.Features.Products
                 return BadRequest();
             }
 
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("pick")]
+        public async Task<ActionResult> PickProducts(UpdateEditorsPicksModel model)
+        {
+            var updated = await this.productService.UpdateEditorsPicks(model.MainProductId, model.SideProductId);
             return Ok();
         }
     }

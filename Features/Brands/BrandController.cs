@@ -26,6 +26,13 @@ namespace HypeStock.Features.Brands
         }
 
         [HttpGet]
+        [Route("all")]
+        public async Task<IEnumerable<BrandDetailsServiceModel>> GetAll()
+        {
+            return await this.brandService.GetAll();
+        }
+
+        [HttpGet]
         [Route("hot")]
         public async Task<IEnumerable<BrandDetailsServiceModel>> GetPopularBrands()
         {

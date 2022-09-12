@@ -10,6 +10,7 @@ namespace HypeStock.Features.Brands
     {
         public Task<int> Create(string name, string description, string imageUrl);
         public Task<BrandDetailsServiceModel> Get(int brandId);
+        public Task<IEnumerable<BrandDetailsServiceModel>> GetAll();
         public Task<IEnumerable<BrandDetailsServiceModel>> GetHot();
         public Task<BrandDetailsServiceModel> Vote(int brandId, int likes, int dislikes);
     }
