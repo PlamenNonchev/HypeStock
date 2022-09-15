@@ -16,5 +16,7 @@ namespace HypeStock.Features.Brands.Models
         public int Likes { get; set; }
         public int Dislikes { get; set; }
         public string LikeRatio { get; set; }
+        public bool HasUserLiked { get; set; }
+        public bool HasUserDisliked { get; set; }
     }
 }

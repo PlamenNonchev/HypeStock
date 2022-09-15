@@ -44,7 +44,10 @@ namespace HypeStock.Features.Products
         [HttpGet]
         [Route(Id)]
         public async Task<ActionResult<ProductDetailsServiceModel>> Details(int id)
-            => await this.productService.Details(id);
+        {
+            var userId = this.User.GetId();
+            return await this.productService.Details(id, userId);
+        }
 
         [HttpGet]
         [Route("hot")]
@@ -115,6 +118,35 @@ namespace HypeStock.Features.Products
         public async Task<ActionResult> PickProducts(UpdateEditorsPicksModel model)
         {
             var updated = await this.productService.UpdateEditorsPicks(model.MainProductId, model.SideProductId);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("liked")]
+        public async Task<ActionResult<IEnumerable<ProductDetailsServiceModel>>> GetProductsLikedByUser()
+        {
+            var userId = this.User.GetId();
+
+            return Ok(await this.productService.GetLikedByUser(userId));
+        }
+
+        [HttpPut]
+        [Route(nameof(Like))]
+        public async Task<ActionResult> Like([FromBody] int productId)
+        {
+            var userId = this.User.GetId();
+            await productService.Like(productId, userId);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route(nameof(Dislike))]
+        public async Task<ActionResult> Dislike([FromBody] int productId)
+        {
+            var userId = this.User.GetId();
+            await productService.Dislike(productId, userId);
+
             return Ok();
         }
     }

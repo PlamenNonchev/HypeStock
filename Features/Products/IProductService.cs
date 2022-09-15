@@ -17,7 +17,10 @@ namespace HypeStock.Features.Products
         public Task<IEnumerable<ProductDetailsServiceModel>> GetHotProducts();
         public Task<IEnumerable<ProductDetailsServiceModel>> GetProductsDroppingShortly();
         public Task<IEnumerable<ProductDetailsServiceModel>> GetJustAnnouncedProducts();
-        public Task<ProductDetailsServiceModel> Details(int id);
-        public Task<ProductDetailsServiceModel> Vote(int productId, int likes, int dislikes);
+        public Task<IEnumerable<ProductDetailsServiceModel>> GetLikedByUser(string userId);
+        public Task<ProductDetailsServiceModel> Details(int id, string userId);
+        public Task Like(int productId, string userId);
+        public Task Dislike(int productId, string userId);
+
     }
 }

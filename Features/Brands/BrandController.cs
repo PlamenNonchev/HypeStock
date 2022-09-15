@@ -1,4 +1,5 @@
 ﻿using HypeStock.Features.Brands.Models;
+using HypeStock.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,7 +23,8 @@ namespace HypeStock.Features.Brands
         [Route("{id}")]
         public async Task<BrandDetailsServiceModel> GetBrandById(int id)
         {
-            return await this.brandService.Get(id);
+            var userId = this.User.GetId();
+            return await this.brandService.Get(id, userId);
         }
 
         [HttpGet]
@@ -49,12 +51,23 @@ namespace HypeStock.Features.Brands
         }
 
         [HttpPut]
-        [Route(nameof(Vote))]
-        public async Task<ActionResult<BrandDetailsServiceModel>> Vote(BrandDetailsServiceModel brand)
+        [Route(nameof(Like))]
+        public async Task<ActionResult> Like([FromBody] int brandId)
         {
-            var updatedBrand = await brandService.Vote(brand.Id, brand.Likes, brand.Dislikes);
+            var userId = this.User.GetId();
+            await brandService.Like(brandId, userId);
 
-            return Ok(updatedBrand);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route(nameof(Dislike))]
+        public async Task<ActionResult> Dislike([FromBody] int brandId)
+        {
+            var userId = this.User.GetId();
+            await brandService.Dislike(brandId, userId);
+
+            return Ok();
         }
     }
 }

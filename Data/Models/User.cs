@@ -8,5 +8,7 @@ namespace HypeStock.Data.Models
 {
     public class User: IdentityUser
     {
+        public IEnumerable<UserBrandLikes> BrandLikes { get; set; }
+        public IEnumerable<UserProductLikes> ProductLikes { get; set; }
     }
 }

@@ -4,14 +4,16 @@ using HypeStock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HypeStock.Migrations
 {
     [DbContext(typeof(HypeStockDbContext))]
-    partial class HypeStockDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220913202421_Add UserBrandLikes table")]
+    partial class AddUserBrandLikestable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,8 +31,14 @@ namespace HypeStock.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Dislikes")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -225,24 +233,6 @@ namespace HypeStock.Migrations
                     b.ToTable("UserBrandLikes");
                 });
 
-            modelBuilder.Entity("HypeStock.Data.Models.UserProductLikes", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("UserProductLikes");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -417,21 +407,6 @@ namespace HypeStock.Migrations
 
                     b.HasOne("HypeStock.Data.Models.User", "User")
                         .WithMany("BrandLikes")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("HypeStock.Data.Models.UserProductLikes", b =>
-                {
-                    b.HasOne("HypeStock.Data.Models.Product", "Product")
-                        .WithMany("LikesFromUsers")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HypeStock.Data.Models.User", "User")
-                        .WithMany("ProductLikes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

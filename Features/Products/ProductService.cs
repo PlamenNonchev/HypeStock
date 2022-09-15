@@ -31,8 +31,6 @@ namespace HypeStock.Features.Products
                 Model = model,
                 Colorway = colorway,
                 ReleaseDate = releaseDate,
-                Likes = 0,
-                Dislikes = 0,
                 Price = price,
             };
 
@@ -117,16 +115,24 @@ namespace HypeStock.Features.Products
         public async Task<IEnumerable<ProductDetailsServiceModel>> GetHotProducts() 
         {
             var products = await this.data.Products.Include(p => p.Brand).ToListAsync();
-            return products.OrderByDescending(p => p.LikeRatio).Take(4)
-                .Select(p => new ProductDetailsServiceModel
+            var productDtos = new List<ProductDetailsServiceModel>();
+            foreach (var product in products)
+            {
+                var likes = await GetLikesCount(product.Id);
+                var dislikes = await GetDislikesCount(product.Id);
+                var likeRatio = CalculateLikeRatio(likes, dislikes);
+                productDtos.Add(new ProductDetailsServiceModel()
                 {
-                    Id = p.Id,
-                    Brand = p.Brand.Name,
-                    Model = p.Model,
-                    ImageUrl = p.ImageUrl,
-                    Description = p.Description,
-                })
-                .ToList();
+                    Id = product.Id,
+                    Brand = product.Brand.Name,
+                    Model = product.Model,
+                    ImageUrl = product.ImageUrl,
+                    Description = product.Description,
+                    LikeRatio = likeRatio.ToString("#.##"),
+                });
+            }
+
+            return productDtos.OrderByDescending(p => p.LikeRatio).Take(4).ToList();
         }
 
         public async Task<IEnumerable<ProductDetailsServiceModel>> GetProductsDroppingShortly()
@@ -159,7 +165,7 @@ namespace HypeStock.Features.Products
                 .ToList();
         }
 
-        public async Task<ProductDetailsServiceModel> Details(int id)
+        public async Task<ProductDetailsServiceModel> Details(int id, string userId)
         {
             var product = await this.data
                 .Products.Include(p => p.Brand)
@@ -167,19 +173,27 @@ namespace HypeStock.Features.Products
                 .Where(p => p.Id == id)
                 .FirstOrDefaultAsync();
 
-             var result = new ProductDetailsServiceModel
+            var hasUserLiked = CheckIfUserHasLiked(id, userId);
+            var hasUserDisliked = CheckIfUserHasDisliked(id, userId);
+            var likesCount = await GetLikesCount(id);
+            var dislikesCount = await GetDislikesCount(id);
+            var likeRatio = CalculateLikeRatio(likesCount, dislikesCount);
+
+            var result = new ProductDetailsServiceModel
                {
                    Id = product.Id,
                    ImageUrl = product.ImageUrl,
                    Description = product.Description,
                    Brand = product.Brand.Name,
                    Model = product.Model,
-                   Likes = product.Likes,
-                   Dislikes = product.Dislikes,
-                   LikeRatio = product.LikeRatio.ToString("#.##"),
+                   Likes = likesCount,
+                   Dislikes = dislikesCount,
+                   LikeRatio = likeRatio.ToString("#.##"),
                    ReleaseDate = product.ReleaseDate.ToShortDateString(),
                    Released = product.ReleaseDate < DateTime.Now,
                    Colorway = product.Colorway,
+                   HasUserLiked = hasUserLiked,
+                   HasUserDisliked = hasUserDisliked,
                };
 
             var retailers = product.ProductRetailers.Select(pr => pr.Retailer).Select(r => new RetailerServiceModel
@@ -214,63 +228,56 @@ namespace HypeStock.Features.Products
             return result;
         }
 
-        public async Task<ProductDetailsServiceModel> Vote(int productId, int likes, int dislikes)
+        public async Task<IEnumerable<ProductDetailsServiceModel>> GetLikedByUser(string userId)
         {
-            var product = await this.data
-                .Products.Include(p => p.Brand)
-                .Include(p => p.ProductRetailers).ThenInclude(pr => pr.Retailer)
-                .Where(p => p.Id == productId)
-                .FirstOrDefaultAsync();
-
-            product.Likes = likes;
-            product.Dislikes = dislikes;
-
-            await this.data.SaveChangesAsync();
-
-            var result = new ProductDetailsServiceModel
+            var likedProducts = await this.data.UserProductLikes.Include(up => up.Product).ThenInclude(p => p.Brand)
+                .Where(up => up.UserId == userId && up.Type == "Like").ToListAsync();
+            var productsDtos = new List<ProductDetailsServiceModel>();
+            foreach (var likedProduct in likedProducts)
             {
-                Id = product.Id,
-                ImageUrl = product.ImageUrl,
-                Description = product.Description,
-                Brand = product.Brand.Name,
-                Model = product.Model,
-                Likes = product.Likes,
-                Dislikes = product.Dislikes,
-                LikeRatio = product.LikeRatio.ToString("#.##"),
-                ReleaseDate = product.ReleaseDate.Date.ToString(),
-                Colorway = product.Colorway,
+                var productLikes = await GetProductLikesCount(likedProduct.ProductId);
+                productsDtos.Add(new ProductDetailsServiceModel
+                {
+                    Id = likedProduct.ProductId,
+                    Brand = likedProduct.Product.Brand.Name,
+                    Model = likedProduct.Product.Model,
+                    Price = likedProduct.Product.Price,
+                    ReleaseDate = likedProduct.Product.ReleaseDate.Date.ToShortDateString(),
+                    Colorway = likedProduct.Product.Colorway,
+                    Likes = productLikes,
+                    ImageUrl = likedProduct.Product.ImageUrl,
+                });
+            }
+
+            return productsDtos;
+        }
+
+        public async Task Like(int productId, string userId)
+        {
+            var vote = new UserProductLikes
+            {
+                UserId = userId,
+                ProductId = productId,
+                Type = "Like"
             };
 
-            var retailers = product.ProductRetailers.Select(pr => pr.Retailer).Select(r => new RetailerServiceModel
+            this.data.Add(vote);
+
+            await this.data.SaveChangesAsync();
+        }
+
+        public async Task Dislike(int productId, string userId)
+        {
+            var vote = new UserBrandLikes
             {
-                Id = r.Id,
-                Description = r.Description,
-                Name = r.Name,
-                ImageUrl = r.ImageUrl,
-                WebsiteUrl = r.WebsiteUrl,
-            }).ToList();
+                UserId = userId,
+                BrandId = productId,
+                Type = "Dislike"
+            };
 
-            result.Retailers = retailers;
+            this.data.Add(vote);
 
-            var similiarProducts = await this.data
-                .Products.Include(p => p.Brand)
-                .Where(p => p.Colorway == product.Colorway && p.Id != product.Id)
-                .Select(p => new ProductDetailsServiceModel
-                {
-                    Id = p.Id,
-                    ImageUrl = p.ImageUrl,
-                    Brand = p.Brand.Name,
-                    Model = p.Model,
-                })
-                .ToListAsync();
-
-            var searchParams = result.Brand + " " + result.Model;
-            await AddEbayListings(searchParams, result);
-            result.EbaySoldPrices = await GetPastEbaySalePrices(searchParams);
-
-            result.SimilarProducts = similiarProducts;
-
-            return result;
+            await this.data.SaveChangesAsync();
         }
 
         public async Task AddEbayListings(string searchKeywords, ProductDetailsServiceModel productResult)
@@ -359,10 +366,48 @@ namespace HypeStock.Features.Products
                    .FirstOrDefault(node => node.HasClass("s-item__details"));
 
                 var price = listingDetails.Descendants("span").FirstOrDefault(node => node.HasClass("s-item__price")).InnerText;
-                result.Add(decimal.Parse(price.Remove(0, 1)));
+                if (!price.Contains("to"))
+                {
+                    result.Add(decimal.Parse(price.Remove(0, 1)));
+                }
             }
 
             return result;
+        }
+
+        private async Task<int> GetProductLikesCount(int productId)
+        {
+            return await this.data.UserProductLikes.Where(up => up.ProductId == productId && up.Type == "Like").CountAsync();
+        }
+
+        private bool CheckIfUserHasLiked(int productId, string userId)
+        {
+            return this.data.UserProductLikes.Any(up => up.ProductId == productId && up.UserId == userId && up.Type == "Like");
+        }
+
+        private bool CheckIfUserHasDisliked(int productId, string userId)
+        {
+            return this.data.UserProductLikes.Any(up => up.ProductId == productId && up.UserId == userId && up.Type == "Dislike");
+        }
+
+        private async Task<int> GetLikesCount(int productId)
+        {
+            return await this.data.UserProductLikes.Where(up => up.ProductId == productId && up.Type == "Like").CountAsync();
+        }
+
+        private async Task<int> GetDislikesCount(int productId)
+        {
+            return await this.data.UserProductLikes.Where(up => up.ProductId == productId && up.Type == "Dislike").CountAsync();
+        }
+
+        private decimal CalculateLikeRatio(int likes, int dislikes)
+        {
+            if (likes + dislikes == 0)
+            {
+                return 0;
+            }
+
+            return ((decimal)likes / (likes + dislikes)) * 100;
         }
     }
 }

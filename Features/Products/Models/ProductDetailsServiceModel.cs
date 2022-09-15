@@ -22,6 +22,8 @@ namespace HypeStock.Features.Products.Models
         public string Colorway { get; set; }
         public decimal Price { get; set; }
         public string EbayUrl { get; set; }
+        public bool HasUserLiked { get; set; }
+        public bool HasUserDisliked { get; set; }
         public List<ProductDetailsServiceModel> SimilarProducts { get; set; }
         public List<RetailerServiceModel> Retailers { get; set; }
         public List<EbayListingServiceModel> EbayListings { get; set; }
