@@ -4,14 +4,16 @@ using HypeStock.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HypeStock.Migrations
 {
     [DbContext(typeof(HypeStockDbContext))]
-    partial class HypeStockDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220915210240_RemoveLikeAndDislikesFromProduct")]
+    partial class RemoveLikeAndDislikesFromProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

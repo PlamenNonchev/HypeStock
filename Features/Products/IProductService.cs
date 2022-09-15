@@ -22,5 +22,7 @@ namespace HypeStock.Features.Products
         public Task Like(int productId, string userId);
         public Task Dislike(int productId, string userId);
 
+        public Task<EditorsPicksServiceModel> GetEditorsPicks();
+
     }
 }

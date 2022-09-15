@@ -32,6 +32,7 @@ namespace HypeStock.Features.Products
                 Colorway = colorway,
                 ReleaseDate = releaseDate,
                 Price = price,
+                DatePosted = DateTime.Now,
             };
 
             this.data.Add(product);
@@ -278,6 +279,37 @@ namespace HypeStock.Features.Products
             this.data.Add(vote);
 
             await this.data.SaveChangesAsync();
+        }
+
+        public async Task<EditorsPicksServiceModel> GetEditorsPicks()
+        {
+            var mainPick = await this.data.EditorsPicks.Include(ep => ep.Product).ThenInclude(p => p.Brand)
+                .Where(ep => ep.Id == 1)
+                .Select(ep => new ProductDetailsServiceModel
+                {
+                    Id = ep.Product.Id,
+                    ImageUrl = ep.Product.ImageUrl,
+                    Brand = ep.Product.Brand.Name,
+                    Model = ep.Product.Model,
+                    ReleaseDate = ep.Product.ReleaseDate.Date.ToShortDateString(),
+                })
+                .FirstOrDefaultAsync();
+            var sidePick = await this.data.EditorsPicks.Include(ep => ep.Product)
+                .Where(ep => ep.Id == 3)
+                .Select(ep => new ProductDetailsServiceModel
+                {
+                    Id = ep.Product.Id,
+                    ImageUrl = ep.Product.ImageUrl,
+                    Brand = ep.Product.Brand.Name,
+                    Model = ep.Product.Model,
+                    ReleaseDate = ep.Product.ReleaseDate.Date.ToShortDateString(),
+                })
+                .FirstOrDefaultAsync();
+            return new EditorsPicksServiceModel
+            {
+                MainProduct = mainPick,
+                SideProduct = sidePick,
+            };
         }
 
         public async Task AddEbayListings(string searchKeywords, ProductDetailsServiceModel productResult)

@@ -149,5 +149,12 @@ namespace HypeStock.Features.Products
 
             return Ok();
         }
+
+        [HttpGet]
+        [Route(nameof(GetPicks))]
+        public async Task<ActionResult<EditorsPicksServiceModel>> GetPicks()
+        {
+            return await productService.GetEditorsPicks();
+        }
     }
 }
